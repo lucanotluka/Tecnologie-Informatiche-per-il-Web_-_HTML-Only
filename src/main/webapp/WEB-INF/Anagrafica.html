@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Anagrafica</title>
+</head>
+<body>
+
+	<h1> // Anagrafica </h1><br>
+
+	<a th:href="@{/Home}"> Home </a>
+
+	<h3> Group info </h3>
+	<div>
+		<p th:text=" ${'Destintion: ' + group.title}"></p>
+		<p th:text=" ${'Creator: ' + session.user.name + ' ' + session.user.surname}"></p>
+		<p th:text="${'Start Date: ' + group.date}"></p>
+		<p th:text="${'Duration (in days): ' + group.duration}"></p>
+		<p th:text="${'Minimum participants: ' + group.minParts}"></p>
+		<p th:text="${'Maximum participants: ' + group.maxParts}"></p>
+	</div>
+
+
+	<h3> // Choose who you need! </h3>
+	<div th:if="${users.size() >0}">
+		<form action="#" th:action="@{/Anagrafica}" method="POST">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Surname</th>
+						<th>Select</th>	
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="u : ${users}">
+						<td th:text="${u.name}"></td>
+						<td th:text="${ u.surname }"></td>
+						<td>
+							<input type="checkbox" name="invitedUsers" th:value="${u.username}"/>
+						</td>
+						
+					</tr>
+				</tbody>
+			</table>
+			<input type="submit" name="Invite">
+		</form>
+	</div>  
+	
+	<div th:if="${users.size() == 0}"> There isnt anyone to choose. </div>
+
+
+</body>
+</html>

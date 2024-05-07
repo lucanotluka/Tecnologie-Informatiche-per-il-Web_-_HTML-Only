@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>LandingPage</title>
+</head>
+<body>
+
+	<h1>Welcome to the Group Management Website</h1>
+	<h4>Designed and Build by Luca Gritti</h4>
+
+	<form action="LoginController" method="POST">
+		Username: <input type="text" name="username" required><br>
+		Password: <input type="password" name="password" required><br>
+		<input type="submit" value="login">		
+		<p th:text=" ${errorMsg}"></p>
+	</form>
+	
+	<form action="RegisterController" method="POST">
+		Name: <input type="text" name="name" required><br>
+		Surname: <input type="text" name="surname" required><br>
+		Username: <input type="text" name="username" required><br>
+		Email: <input type="email" name="email" required><br>
+		Password: <input type="password" name="password" required><br>
+		Confirm Password: <input type="password" name="confirmPassword" required><br>
+		<input type="submit" value="register">
+		<p th:text=" ${errorMsg1}"></p>		
+	</form>
+
+</body>
+</html>

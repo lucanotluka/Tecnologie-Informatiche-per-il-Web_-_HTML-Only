@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Dettagli gruppo</title>
+</head>
+<body>
+	<h1>Group details</h1>
+	<a th:href="@{/Home}"> Home </a>
+	
+	<div>
+		<p th:text=" ${'Title: ' + group.title}"></p>
+		<p th:text=" ${'Creator: ' + group.creator.name + ' ' + group.creator.surname}"></p>
+		<p th:text="${'Start Date: ' + group.creationDate}"></p>
+		<p th:text="${'Duration (in days): ' + group.duration}"></p>
+		<p th:text="${'Minimum participants: ' + group.minParts}"></p>
+		<p th:text="${'Maximum participants: ' + group.maxParts}"></p>
+	</div>
+	
+	<div>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Surname</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="u : ${users}">
+					<td th:text="${u.name}"></td>
+					<td th:text="${ u.surname }"></td>					
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</body>
+</html>

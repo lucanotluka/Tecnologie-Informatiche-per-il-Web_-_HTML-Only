@@ -41,7 +41,8 @@
 						<td th:text="${u.name}"></td>
 						<td th:text="${ u.surname }"></td>
 						<td>
-							<input type="checkbox" name="invitedUsers" th:value="${u.username}"/>
+							<input type="checkbox" name="invitedUsers" th:value="${u.username}" 
+							th:checked="${alreadyInvitedUsers.contains(u.username)}"/>
 						</td>
 						
 					</tr>

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.beans.Group;
 import it.polimi.tiw.beans.User;
+import it.polimi.tiw.dao.GroupDAO;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
@@ -139,11 +141,21 @@ public class AnagraficaController extends HttpServlet {
     	// End of Session persistency check
 		
     	
+    	
     	// --------------- CONTROL & REDIRECT POLICIES ------------------
+    	
     	String[] invitedUsers = request.getParameterValues("invitedUsers");
     	
-    	Integer howMany = invitedUsers.length;
-
+    	Integer howMany = 0;
+    	List<String> alreadyInvitedUsers = null;
+    	
+    	// When Creator has already selected some Users
+    	if(invitedUsers != null) {
+    		alreadyInvitedUsers = Arrays.asList(invitedUsers);
+    		howMany = alreadyInvitedUsers.size();
+    	}
+  
+    		
 		String title = (String) session.getAttribute("title");
 		Date startDate = (Date) session.getAttribute("date");
 		Integer duration = (Integer) session.getAttribute("duration");
@@ -156,7 +168,7 @@ public class AnagraficaController extends HttpServlet {
     		Integer toRemove = howMany - maxParts;
     		
     		// put the invitedUsers into the request parameter
-    		request.setAttribute("alreadyInvitedUsers", invitedUsers);
+    		request.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
     		
 //			ctx.setVariable("error", "Troppi utenti selezionati! Eliminarne almeno " + toRemove);
 //			path = "/Anagrafica";
@@ -167,7 +179,7 @@ public class AnagraficaController extends HttpServlet {
     		Integer toAdd = minParts - howMany;
     		
     		// put the invitedUsers into the request parameter
-    		request.setAttribute("alreadyInvitedUsers", invitedUsers);
+    		request.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
     		
 //			ctx.setVariable("error", "Troppi pochi utenti selezionati! Aggiungerne almeno " + toAdd);
 //			path = "/Anagrafica";
@@ -175,14 +187,24 @@ public class AnagraficaController extends HttpServlet {
     		
     	}
     	
+    
     	// else: OK!
     	
     	// ACTUALLY CONSTRUCT THE DAOs AND SAVE into DB!
+    	GroupDAO groupDAO = new GroupDAO(connection);
+    	
+    	Group group = new Group();
+		group.setTitle(title);
+		group.setCreationDate(startDate);
+		group.setHowManyDays(duration);
+		group.setMinParts(minParts);
+		group.setMaxParts(maxParts);
+    	
     	
     	// THEN, REDIRECT TO HOME
     	
     	
-    	
+    		
     	
     	
     	

@@ -45,13 +45,13 @@ public class RegisterController extends HttpServlet {
         String password = null;
         String confirmPassword = null;
 		
-		try {
-			username = StringEscapeUtils.escapeJava(request.getParameter("username"));
-			email = StringEscapeUtils.escapeJava(request.getParameter("email"));
-			name = StringEscapeUtils.escapeJava(request.getParameter("name"));
-			surname = StringEscapeUtils.escapeJava(request.getParameter("surname"));
-			password = StringEscapeUtils.escapeJava(request.getParameter("password"));
-			confirmPassword = StringEscapeUtils.escapeJava(request.getParameter("confirmPassword"));
+		try { // StringEscapeUtils.escapeJava();
+			username = request.getParameter("username");
+			email = request.getParameter("email");
+			name = request.getParameter("name");
+			surname = request.getParameter("surname");
+			password = request.getParameter("password");
+			confirmPassword = request.getParameter("confirmPassword");
 			
 			if (username == null || name == null || surname == null || email == null || password == null || confirmPassword == null 
 					|| username.isEmpty() || name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {

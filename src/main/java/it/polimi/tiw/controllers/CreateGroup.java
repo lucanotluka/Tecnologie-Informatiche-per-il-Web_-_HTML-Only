@@ -86,7 +86,7 @@ public class CreateGroup extends HttpServlet {
 		}
 		
 		
-		// set attributes for the session
+		// set attributes as session. manage them further in Anagrafica
 		
 		session.setAttribute("title", title);
 		session.setAttribute("date", startDate);
@@ -95,7 +95,6 @@ public class CreateGroup extends HttpServlet {
 		session.setAttribute("maxParts", maxParts);
 		
 		// initialize counter
-		
 		
 		Integer zero = 0;
 		session.setAttribute("counter", zero);

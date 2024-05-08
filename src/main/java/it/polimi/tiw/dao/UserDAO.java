@@ -50,7 +50,7 @@ public class UserDAO extends HttpServlet {
 	}
 	
 	public boolean usernameEmailUnique(String username, String email) throws SQLException{
-		String query = "SELECT  username, email FROM user WHERE username = ? AND password = ?";
+		String query = "SELECT  username, email FROM user WHERE username = ? AND email = ?";
 		
 		try (PreparedStatement pStatement = con.prepareStatement(query);){
 			pStatement.setString(1, username);

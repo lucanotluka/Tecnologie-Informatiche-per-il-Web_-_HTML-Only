@@ -10,11 +10,15 @@
 
 	<a th:href="@{/Home}"> Home </a>
 
+
+	<h2 th:text=" ${error}"></h2>
+
+
 	<h3> Group info </h3>
 	<div>
-		<p th:text=" ${'Destintion: ' + group.title}"></p>
+		<p th:text=" ${'Destination: ' + group.title}"></p>
 		<p th:text=" ${'Creator: ' + session.user.name + ' ' + session.user.surname}"></p>
-		<p th:text="${'Start Date: ' + group.date}"></p>
+		<p th:text="${'Start Date: ' + group.creationDate}"></p>
 		<p th:text="${'Duration (in days): ' + group.duration}"></p>
 		<p th:text="${'Minimum participants: ' + group.minParts}"></p>
 		<p th:text="${'Maximum participants: ' + group.maxParts}"></p>
@@ -47,7 +51,7 @@
 		</form>
 	</div>  
 	
-	<div th:if="${users.size() == 0}"> There isnt anyone to choose. </div>
+	<div th:if="${users.size() == 0}"> There isn't anyone to choose. </div>
 
 
 </body>

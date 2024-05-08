@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import it.polimi.tiw.beans.Group;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.UserDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
@@ -33,6 +34,7 @@ public class AnagraficaController extends HttpServlet {
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		// ---------------------- SESSION CHECK ------------------------
     	// If the user is not logged in (not present in session) redirect to the login
     	String loginpath = getServletContext().getContextPath() + "/LandingPage.html";
@@ -44,24 +46,31 @@ public class AnagraficaController extends HttpServlet {
     	User user = (User) session.getAttribute("user");
     	// End of Session persistency check
 		
-		// Counter check
+		
+    	// --------------- Counter check ---------------
     	Integer counter = (Integer) session.getAttribute("counter");
     	if(counter < 3 ) {
     		counter++;
     		session.setAttribute("counter", counter);;
     	} else {
     		
-    		
     		// destroy session.Params
+    		session.removeAttribute("title");;
+    		session.removeAttribute("date");
+    		session.removeAttribute("duration");
+    		session.removeAttribute("minParts");
+    		session.removeAttribute("maxParts");
     		
+    		// redirect to CANCELLAZIONE
     		
-//    		String ctxpath = getServletContext().getContextPath();
+    		//	String ctxpath = getServletContext().getContextPath();
     		//	String path = ctxpath + "/Anagrafica";
-    		response.sendRedirect("/Cancellazione");
+    		response.sendRedirect("/WEB-INF/Cancellazione.html");
     	}
+    	// ------------- END of counter check -------------
     	
-    	
-    	// forse si possono ottenere dalla request 
+        	 
+    	// retrieving of group attributes from session
     	
 		String title = (String) session.getAttribute("title");
 		Date startDate = (Date) session.getAttribute("date");
@@ -75,20 +84,43 @@ public class AnagraficaController extends HttpServlet {
 			return;
 		}
 	
+		Group group = new Group();
+		group.setTitle(title);
+		group.setCreationDate(startDate);
+		group.setHowManyDays(duration);
+		group.setMinParts(minParts);
+		group.setMaxParts(maxParts);
+		
+		
+		
+		
+		
+		// List of Users for Anagrafica page: will be used by Thymeleaf!
+		
 		UserDAO userDAO = new UserDAO(connection);
-		List<User> usersExceptCreator = null;
+		List<User> users = null;
 		try {
-			usersExceptCreator = userDAO.findAllUsersExcept(creator);
+			users = userDAO.findAllUsersExcept(creator);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users");
 			return;
 		}
 		
+//		Object ctx;
+//		ctx.setVariable("users", users);
+//		ctx.setVariable("group", group);
 		
 		
-		// set of session attributes
-		
-		
+		// The non-first time we'll be here, there will be a List of already selected Users.
+		if(counter > 1) {
+			
+			// the array of pre-selected usernames
+			String[] invitedUsers = request.getParameterValues("invitedUsers");
+			
+			// send the invitedUsers to Thymeleaf: if u.username is in invitedUsers, check V
+//			ctx.setVariable("alreadyInvitedUsers", invitedUsers);
+			
+		}	
 		
 	}
 
@@ -107,9 +139,51 @@ public class AnagraficaController extends HttpServlet {
     	// End of Session persistency check
 		
     	
-    	String[] selectedUsers = request.getParameterValues("selectedUsers");
+    	// --------------- CONTROL & REDIRECT POLICIES ------------------
+    	String[] invitedUsers = request.getParameterValues("invitedUsers");
     	
-    	// CONTROL & REDIRECT POLICIES
+    	Integer howMany = invitedUsers.length;
+
+		String title = (String) session.getAttribute("title");
+		Date startDate = (Date) session.getAttribute("date");
+		Integer duration = (Integer) session.getAttribute("duration");
+		Integer minParts = (Integer) session.getAttribute("minParts");
+		Integer maxParts = (Integer) session.getAttribute("maxParts");
+		String creator = user.getUsername();
+    	
+    		// TOO MANY!
+    	if(howMany > maxParts){
+    		Integer toRemove = howMany - maxParts;
+    		
+    		// put the invitedUsers into the request parameter
+    		request.setAttribute("alreadyInvitedUsers", invitedUsers);
+    		
+//			ctx.setVariable("error", "Troppi utenti selezionati! Eliminarne almeno " + toRemove);
+//			path = "/Anagrafica";
+//			templateEngine.process(path, ctx, response.getWriter());
+    		
+    	} 	// TOO FEW! 
+    	else if (howMany < minParts) {
+    		Integer toAdd = minParts - howMany;
+    		
+    		// put the invitedUsers into the request parameter
+    		request.setAttribute("alreadyInvitedUsers", invitedUsers);
+    		
+//			ctx.setVariable("error", "Troppi pochi utenti selezionati! Aggiungerne almeno " + toAdd);
+//			path = "/Anagrafica";
+//			templateEngine.process(path, ctx, response.getWriter());
+    		
+    	}
+    	
+    	// else: OK!
+    	
+    	// ACTUALLY CONSTRUCT THE DAOs AND SAVE into DB!
+    	
+    	// THEN, REDIRECT TO HOME
+    	
+    	
+    	
+    	
     	
     	
 		

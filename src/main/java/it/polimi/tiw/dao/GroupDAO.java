@@ -13,7 +13,6 @@ import it.polimi.tiw.beans.Group;
 public class GroupDAO {
 
 	private Connection con;
-	private Integer ID;
 
 	public GroupDAO(Connection connection) {
 		this.con = connection;
@@ -74,8 +73,8 @@ public class GroupDAO {
 					// gotta retrieve groups where user isnt the creator 
 					// and where invitations contains user
 					// and group.ID = invitations.groupID 
-		String query = "SELECT * from group INNER JOIN invitations ON group.ID = invitations.groupID "
-				+ "WHERE group.creator != ? AND invitations.user = ?";
+		String query = "SELECT * from group INNER JOIN user2group ON group.ID = user2group.groupID "
+				+ "WHERE group.creator != ? AND user2group.username = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 			pStatement.setString(1, user);
 			pStatement.setString(2, user);
@@ -103,9 +102,97 @@ public class GroupDAO {
 
 	
 	
-//	public void createGroup(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator, List<String> invitatedUsers) throws SQLException {
-//		
-//	}
+	public void createGroup(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator, List<String> invitatedUsers) throws SQLException {
+		
+		
+		// disable autocommit
+		con.setAutoCommit(false);
+		
+		try {
+			
+			// 1st step: save group info and retrieve its ID (auto-generated)
+			
+			int groupID = insertGroupOnly(title, startDate, duration, minParts, maxParts, creator);
+			if(groupID == -1) throw new SQLException("GroupID is null");
+		
+			// 2nd step: save invited Users into user2group
+			for(String username : invitatedUsers) {
+				insertUser2Group(groupID, username);
+			}
+		
+			// commit if everything is ok
+			con.commit();
+			
+		} catch (SQLException e) {			
+			con.rollback();
+			throw e;
+			
+		} 
+		
+		// enable autocommit again
+		con.setAutoCommit(true);
+					
+	}
+	
+	private void insertUser2Group(int groupID, String username) throws SQLException {
+		
+		String query = "INSERT into user2group (ID, username)   VALUES(?, ?)";
+		PreparedStatement pStatement = null;
+		
+		try {
+			pStatement = con.prepareStatement(query);
+			
+			pStatement.setInt(1, groupID);
+			pStatement.setString(2, username);
+			
+			pStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			throw e;
+		}
+		
+	}
+	
+	private int insertGroupOnly(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator) throws SQLException {
+		
+		String query = "INSERT into group (title, startDate, duration, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
+		PreparedStatement pStatement = null;
+		
+		int generatedGroupID = -1;
+		
+		try {
+			
+			pStatement = con.prepareStatement(query);
+			
+			pStatement.setString(1, title);
+			pStatement.setDate(2, (java.sql.Date) startDate);
+			pStatement.setInt(3, duration);
+			pStatement.setInt(4, minParts);
+			pStatement.setInt(5, maxParts);
+			pStatement.setString(6, creator);
+			
+			
+
+			int rowsAffected = pStatement.executeUpdate();
+			
+	        if (rowsAffected > 0) {
+	            try (ResultSet generatedKeys = pStatement.getGeneratedKeys()) {
+	                if (generatedKeys.next()) {
+	                    generatedGroupID = generatedKeys.getInt(1); // Retrieve the auto-generated GroupID
+	                    // Use generatedGroupID as needed
+	                    if(generatedGroupID == 0) generatedGroupID = -1;
+	                }
+	            } catch (SQLException e) {
+	    			throw e;
+	    		}	
+	        }
+			
+		} catch (SQLException e) {
+			throw e;
+		}		
+
+		return generatedGroupID; 
+	}
 
 }
 

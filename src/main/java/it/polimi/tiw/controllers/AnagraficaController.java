@@ -188,38 +188,24 @@ public class AnagraficaController extends HttpServlet {
     	}
     	
     
-    	// else: OK!
+    	// else:			 OK!
     	
     	// ACTUALLY CONSTRUCT THE DAOs AND SAVE into DB!
     	GroupDAO groupDAO = new GroupDAO(connection);
+    		   // (the groups info are above!)
     	
-    	Group group = new Group();
-		group.setTitle(title);
-		group.setCreationDate(startDate);
-		group.setHowManyDays(duration);
-		group.setMinParts(minParts);
-		group.setMaxParts(maxParts);
-    	
+    	try {
+			groupDAO.createGroup(title, startDate, duration, minParts, maxParts, creator, alreadyInvitedUsers);
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to register the Group");
+			return;
+		}
     	
     	// THEN, REDIRECT TO HOME
-    	
-    	
+    	String path = getServletContext().getContextPath() + "/Home.html";
+    	response.sendRedirect(path);
     		
-    	
-    	
-    	
-		
-//		// Create Group in DB
-//		GroupDAO groupDAO = new GroupDAO(connection);
-//		try {
-//			// groupDAO.createGroup(title, startDate, duration, minParts, maxParts, user.getUsername(), null);
-//			
-//		} catch (SQLException e) {
-//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to create new Group");
-//			return;
-//		}
-
-	}
+  	}
 	
 	
 	

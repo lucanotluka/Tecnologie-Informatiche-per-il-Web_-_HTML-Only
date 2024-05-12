@@ -16,5 +16,12 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/mysql-connector-j-8.0.32.jar"/>
 	<classpathentry kind="lib" path="/home/tiw/eclipse-workspace/Table Example (with DB).zip_expanded/TIW-AJAX-ConferencesTable/src/main/webapp/WEB-INF/lib/apache-commons-lang.jar"/>
 	<classpathentry kind="lib" path="/home/tiw/eclipse-workspace/Eclipse PureHTML vs RIA.zip_expanded/TIW-PureHTMLvsRIA/src/main/webapp/WEB-INF/lib/thymeleaf-3.0.11.RELEASE.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/apache-commons-lang.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/attoparser-2.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/javassist-3.20.0-GA.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ognl-3.1.12.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/thymeleaf-3.0.11.RELEASE.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/unbescape-1.1.6.RELEASE.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

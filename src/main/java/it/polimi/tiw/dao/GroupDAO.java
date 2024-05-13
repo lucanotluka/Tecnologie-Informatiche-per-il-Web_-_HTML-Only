@@ -39,7 +39,7 @@ public class GroupDAO {
 					group.setHowManyDays(result.getInt("howManyDays"));
 					group.setMinParts(result.getInt("minParts"));
 					group.setMaxParts(result.getInt("maxParts"));
-					group.setParticipants(findUsersByGroup(group));
+					group.setParticipants(findUsersByGroupID(result.getInt("ID")));
 					
 					myGroups.add(group);
 				}
@@ -48,14 +48,14 @@ public class GroupDAO {
 		return myGroups;
 	}
 
-	private List<String> findUsersByGroup(Group group) throws SQLException {
+	private List<String> findUsersByGroupID(int ID) throws SQLException {
 		
 		List<String> users = new ArrayList<String>();
 		
-		String query = "SELECT * from invitations where groupID = ?";
+		String query = "SELECT * from user2group where IDgroup = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 			
-			pStatement.setInt(1, group.getID());
+			pStatement.setInt(1, ID);
 			
 			try (ResultSet result = pStatement.executeQuery();) {
 				while (result.next()) {
@@ -73,7 +73,7 @@ public class GroupDAO {
 					// gotta retrieve groups where user isnt the creator 
 					// and where invitations contains user
 					// and group.ID = invitations.groupID 
-		String query = "SELECT * from group INNER JOIN user2group ON group.ID = user2group.groupID "
+		String query = "SELECT * from group INNER JOIN user2group ON group.ID = user2group.IDgroup "
 				+ "WHERE group.creator != ? AND user2group.username = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 			pStatement.setString(1, user);
@@ -91,7 +91,7 @@ public class GroupDAO {
 					group.setHowManyDays(result.getInt("howManyDays"));
 					group.setMinParts(result.getInt("minParts"));
 					group.setMaxParts(result.getInt("maxParts"));
-					group.setParticipants(findUsersByGroup(group));
+					group.setParticipants(findUsersByGroupID(result.getInt("ID")));
 					
 					othersGroups.add(group);	
 				}

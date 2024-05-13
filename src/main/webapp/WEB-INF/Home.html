@@ -28,7 +28,7 @@
 				<tr th:each="g : ${myGroups}">
 					<td th:text="${g.title}"></td>
 					<td th:text="${ g.creationDate }"></td>
-					<td th:text="${ g.participants.getSize() +1 }"></td>
+					<td th:text="${ g.participants.size() +1 }"></td>
 					<td><a th:href="@{/GetGroupDetails(groupid=${g.ID})}">Details</a></td>
 				</tr>
 			</tbody>
@@ -50,9 +50,9 @@
 			</thead>
 			<tbody>
 				<tr th:each="g : ${othersGroups}">
-					<td th:text="${g.destination}"></td>
+					<td th:text="${g.title}"></td>
 					<td th:text="${ g.creationDate }"></td>
-					<td th:text="${ g.creator.getName()} ${ g.creator.getSurname()}"></td>
+					<td th:text="${ g.creator }"></td>
 					<td><a th:href="@{/GetGroupDetails(groupid=${g.ID})}">Details</a></td>
 				</tr>
 			</tbody>

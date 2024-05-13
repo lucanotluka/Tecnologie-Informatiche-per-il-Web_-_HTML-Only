@@ -105,8 +105,10 @@ public class RegisterController extends HttpServlet {
     			String path = "/LandingPage.html";
     			templateEngine.process(path, ctx, response.getWriter());
     		}
-    		
-    		// if not successful, throws sql exception
+    		else { // if not successful, throws sql exception
+    			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to register User");    			
+       			return;
+    		}
     			
    		} catch (SQLException e) {
    			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to register User");    			

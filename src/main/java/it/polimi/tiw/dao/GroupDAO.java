@@ -22,7 +22,7 @@ public class GroupDAO {
 		
 		List<Group> myGroups = new ArrayList<Group>();
 		
-		String query = "SELECT * from group where creator = ?";
+		String query = "SELECT * from groupTable where creator = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 			
 			pStatement.setString(1, user);	// the user is the creator we wanna find
@@ -59,7 +59,7 @@ public class GroupDAO {
 			
 			try (ResultSet result = pStatement.executeQuery();) {
 				while (result.next()) {
-					String invitedUser = result.getString("user");
+					String invitedUser = result.getString("username");
 					users.add(invitedUser);
 				}
 			}
@@ -73,8 +73,8 @@ public class GroupDAO {
 					// gotta retrieve groups where user isnt the creator 
 					// and where invitations contains user
 					// and group.ID = invitations.groupID 
-		String query = "SELECT * from group INNER JOIN user2group ON group.ID = user2group.IDgroup "
-				+ "WHERE group.creator != ? AND user2group.username = ?";
+		String query = "SELECT * from groupTable INNER JOIN user2group ON groupTable.ID = user2group.IDgroup "
+				+ "WHERE groupTable.creator != ? AND user2group.username = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 			pStatement.setString(1, user);
 			pStatement.setString(2, user);
@@ -136,7 +136,7 @@ public class GroupDAO {
 	
 	private void insertUser2Group(int groupID, String username) throws SQLException {
 		
-		String query = "INSERT into user2group (ID, username)   VALUES(?, ?)";
+		String query = "INSERT into user2group (IDgroup, username)   VALUES(?, ?)";
 		PreparedStatement pStatement = null;
 		
 		try {
@@ -155,7 +155,7 @@ public class GroupDAO {
 	
 	private int insertGroupOnly(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator) throws SQLException {
 		
-		String query = "INSERT into group (title, startDate, duration, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
+		String query = "INSERT into groupTable (title, startDate, duration, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
 		PreparedStatement pStatement = null;
 		
 		int generatedGroupID = -1;

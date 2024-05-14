@@ -3,8 +3,6 @@ package it.polimi.tiw.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,24 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.beans.Group;
 import it.polimi.tiw.beans.User;
-import it.polimi.tiw.dao.GroupDAO;
 import it.polimi.tiw.utils.ConnectionHandler;
 
-
-@WebServlet("/Home")
-public class HomeController extends HttpServlet {
+@WebServlet("/GetGroupDetails")
+public class GetGroupDetails extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
        
 
-    public HomeController() {
+
+    public GetGroupDetails() {
         super();
     }
     
@@ -45,10 +40,10 @@ public class HomeController extends HttpServlet {
 		templateResolver.setSuffix(".html");
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
+
 	
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     	// ---------------------- SESSION CHECK ------------------------
     	// If the user is not logged in (not present in session) redirect to the login
     	String loginpath = getServletContext().getContextPath() + "/LandingPage.html";
@@ -59,48 +54,24 @@ public class HomeController extends HttpServlet {
     	}
     	User user = (User) session.getAttribute("user");
     	// End of Session persistency check
-    
     	
     	
-    	GroupDAO groupDAO = new GroupDAO(connection);
-    	List<Group> myGroups = new ArrayList<Group>();
-    	List<Group> othersGroups = new ArrayList<Group>();
-    	
-    	// Retrieve the list of MyGroups from the DB!
-    	try {
-			myGroups = groupDAO.findMyGroups(user.getUsername());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover myGroups");
+		// get and check params
+		Integer groupID = null;
+		try {
+			groupID = Integer.parseInt(request.getParameter("groupid"));
+			
+			// if(groupID )   CONTORLS!!
+			
+		} catch (NumberFormatException | NullPointerException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
     	
-
-    	// Retrieve the list of OthersGroups from the DB!
-    	try {
-			othersGroups = groupDAO.findOthersGroup(user.getUsername());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover othersGroups");
-			return;
-		} 
-    	
-    	
-    	// Redirect to the Home page
-    	// and add Groups to the parameters!!
-    	
-		String path = "/WEB-INF/Home.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("myGroups", myGroups);
-		ctx.setVariable("othersGroups", othersGroups);
-		templateEngine.process(path, ctx, response.getWriter());
-    }
-	
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		// TO DO 
+		
 	}
+
 	
 	public void destroy() {
 		try {
@@ -109,5 +80,4 @@ public class HomeController extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
 }

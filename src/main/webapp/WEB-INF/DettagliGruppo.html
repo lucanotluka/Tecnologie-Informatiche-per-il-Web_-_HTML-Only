@@ -10,14 +10,14 @@
 	
 	<div>
 		<p th:text=" ${'Title: ' + group.title}"></p>
-		<p th:text=" ${'Creator: ' + group.creator.name + ' ' + group.creator.surname}"></p>
+		<p th:text=" ${'Creator: ' + group.creator"></p>
 		<p th:text="${'Start Date: ' + group.creationDate}"></p>
 		<p th:text="${'Duration (in days): ' + group.duration}"></p>
 		<p th:text="${'Minimum participants: ' + group.minParts}"></p>
 		<p th:text="${'Maximum participants: ' + group.maxParts}"></p>
 	</div>
 	
-	<div>
+	<div th:if="${users.size() >0}">
 		<table>
 			<thead>
 				<tr>
@@ -33,6 +33,7 @@
 			</tbody>
 		</table>
 	</div>
+	<div th:if="${users.size() == 0}"> There arent any invited users. </div>
 
 </body>
 </html>

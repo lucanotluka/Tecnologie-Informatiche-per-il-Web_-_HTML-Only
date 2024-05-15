@@ -16,11 +16,11 @@
 
 	<h3> Group info </h3>
 	<div>
-		<p th:text=" ${'Destination: ' + group.title}"></p>
+		<p th:text=" ${'Title: ' + group.title}"></p>
 		<p th:text=" ${'Creator: ' + session.user.name + ' ' + session.user.surname}"></p>
 		<p th:text="${'Start Date: ' + group.creationDate}"></p>
-		<p th:text="${'Duration (in days): ' + group.duration}"></p>
-		<p th:text="${'Minimum participants: ' + group.minParts}"></p>
+		<p th:text="${'Duration (in days): ' + group.howManyDays}"></p>
+		<p th:text="${'Minimum participants (including creator!): ' + group.minParts}"></p>
 		<p th:text="${'Maximum participants: ' + group.maxParts}"></p>
 	</div>
 

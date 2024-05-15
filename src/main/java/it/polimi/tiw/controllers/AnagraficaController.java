@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.beans.Group;
 import it.polimi.tiw.beans.User;
@@ -36,9 +38,16 @@ public class AnagraficaController extends HttpServlet {
     }
     
 
-	public void init() throws ServletException {
-		connection  = ConnectionHandler.getConnection(getServletContext());
+    public void init() throws ServletException {
+			ServletContext servletContext = getServletContext();
+			ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+			templateResolver.setTemplateMode(TemplateMode.HTML);
+			this.templateEngine = new TemplateEngine();
+			this.templateEngine.setTemplateResolver(templateResolver);
+			templateResolver.setSuffix(".html");
+			connection = ConnectionHandler.getConnection(getServletContext());
 	}
+
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -130,7 +139,6 @@ public class AnagraficaController extends HttpServlet {
 		}	
 		
 		String path = "/WEB-INF/Anagrafica.html";
-		
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

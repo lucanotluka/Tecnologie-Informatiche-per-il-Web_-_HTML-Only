@@ -1,6 +1,6 @@
 package it.polimi.tiw.beans;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public class Group {
@@ -23,8 +23,8 @@ public class Group {
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setCreationDate(java.util.Date startDate) {
+		this.creationDate = startDate;
 	}
 	public int getHowManyDays() {
 		return howManyDays;

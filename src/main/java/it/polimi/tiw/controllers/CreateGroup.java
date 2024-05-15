@@ -102,9 +102,9 @@ public class CreateGroup extends HttpServlet {
 		
 		// redirect 
 		
-		//	String ctxpath = getServletContext().getContextPath();
-		//	String path = ctxpath + "/Anagrafica";
-		response.sendRedirect("/Anagrafica");
+		String ctxpath = getServletContext().getContextPath();
+		String path = ctxpath + "/Anagrafica";
+		response.sendRedirect(path);
     		
 	}
 

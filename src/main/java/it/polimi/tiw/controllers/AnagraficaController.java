@@ -2,17 +2,21 @@ package it.polimi.tiw.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.beans.Group;
 import it.polimi.tiw.beans.User;
@@ -25,6 +29,7 @@ import it.polimi.tiw.utils.ConnectionHandler;
 public class AnagraficaController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
+	private TemplateEngine templateEngine;
        
     public AnagraficaController() {
         super();
@@ -53,7 +58,7 @@ public class AnagraficaController extends HttpServlet {
     	Integer counter = (Integer) session.getAttribute("counter");
     	if(counter < 3 ) {
     		counter++;
-    		session.setAttribute("counter", counter);;
+    		session.setAttribute("counter", counter);
     	} else {
     		
     		// destroy session.Params
@@ -65,9 +70,9 @@ public class AnagraficaController extends HttpServlet {
     		
     		// redirect to CANCELLAZIONE
     		
-    		//	String ctxpath = getServletContext().getContextPath();
-    		//	String path = ctxpath + "/Anagrafica";
-    		response.sendRedirect("/WEB-INF/Cancellazione.html");
+			String ctxpath = getServletContext().getContextPath();
+			String path = ctxpath + "/WEB-INF/Cancellazione.html";
+    		response.sendRedirect(path);
     	}
     	// ------------- END of counter check -------------
     	
@@ -94,9 +99,6 @@ public class AnagraficaController extends HttpServlet {
 		group.setMaxParts(maxParts);
 		
 		
-		
-		
-		
 		// List of Users for Anagrafica page: will be used by Thymeleaf!
 		
 		UserDAO userDAO = new UserDAO(connection);
@@ -108,9 +110,12 @@ public class AnagraficaController extends HttpServlet {
 			return;
 		}
 		
-//		Object ctx;
-//		ctx.setVariable("users", users);
-//		ctx.setVariable("group", group);
+		
+		// Set the context variables to be shown by Thymeleaf
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("users", users);
+		ctx.setVariable("group", group);
 		
 		
 		// The non-first time we'll be here, there will be a List of already selected Users.
@@ -120,10 +125,13 @@ public class AnagraficaController extends HttpServlet {
 			String[] invitedUsers = request.getParameterValues("invitedUsers");
 			
 			// send the invitedUsers to Thymeleaf: if u.username is in invitedUsers, check V
-//			ctx.setVariable("alreadyInvitedUsers", invitedUsers);
+			ctx.setVariable("alreadyInvitedUsers", invitedUsers);
 			
 		}	
 		
+		String path = "/WEB-INF/Anagrafica.html";
+		
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 

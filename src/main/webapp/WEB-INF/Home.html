@@ -9,7 +9,7 @@
 	<div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div>
-	<h1> // Welcome home, </h1><h2 th:text="${session.user.name + ' ' + session.user.surname}"></h2>
+	<h1> // Welcome home</h1><h2 th:text="${session.user.name + ' ' + session.user.surname}"></h2>
 
 
 
@@ -79,7 +79,7 @@
 					Minimum participants: <input type="number" name="minParts" min=0 required />
 				</p>
 				<p>
-					Maximum participants: <input type="number" name="maxParts" min=0 max="minParts - 1" required />
+					Maximum participants: <input type="number" name="maxParts" min="[[${minParts+1}]]" required />
 				</p>
 
 				<input type="submit" name="Send">

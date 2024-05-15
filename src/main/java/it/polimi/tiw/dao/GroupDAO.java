@@ -18,6 +18,8 @@ public class GroupDAO {
 		this.con = connection;
 	}
 
+	
+	
 	public List<Group> findMyGroups(String user) throws SQLException  {
 		
 		List<Group> myGroups = new ArrayList<Group>();
@@ -103,7 +105,6 @@ public class GroupDAO {
 	
 	
 	public void createGroup(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator, List<String> invitatedUsers) throws SQLException {
-		
 		
 		// disable autocommit
 		con.setAutoCommit(false);
@@ -192,6 +193,36 @@ public class GroupDAO {
 		}		
 
 		return generatedGroupID; 
+	}
+
+
+
+public Group getGroupByID(Integer groupID) throws SQLException {
+		Group group = null;
+		
+		String query = "SELECT * FROM groupTable WHERE ID = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			
+			pstatement.setInt(1, groupID);
+			
+			try (ResultSet result = pstatement.executeQuery();) {
+				
+				if (result.next()) {
+					
+					group = new Group();
+					group.setCreator(result.getString("creator"));
+					group.setID(groupID);
+					group.setTitle(result.getString("title"));
+					group.setCreationDate(result.getDate("creationDate"));
+					group.setHowManyDays(result.getInt("howManyDays"));
+					group.setMinParts(result.getInt("minParts"));
+					group.setMaxParts(result.getInt("maxParts"));
+					group.setParticipants(findUsersByGroupID(result.getInt("ID")));
+				}
+			}
+		}
+		
+		return group;
 	}
 
 }

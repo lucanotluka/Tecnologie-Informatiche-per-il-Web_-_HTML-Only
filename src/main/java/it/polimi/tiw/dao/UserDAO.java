@@ -23,6 +23,27 @@ public class UserDAO extends HttpServlet {
 		this.con = connection;
 	}
 
+	public User getUserByUsername(String username) throws SQLException {
+		User user = null;
+		
+		String query = "SELECT * FROM user WHERE username = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setString(1, username);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (result.next()) {
+					
+					user = new User();
+					user.setPassword(result.getString("password"));
+					user.setEmail(result.getString("email"));
+					user.setUsername(username);
+					user.setName(result.getString("name"));
+					user.setSurname(result.getString("surname"));
+				}
+			}
+		}
+		return user;
+	}
+	
 	public User checkCredentials(String usrn, String pwd) throws SQLException {
 		String query = "SELECT  username, name, surname, email, password FROM user WHERE username = ? AND password = ?";
 		
@@ -113,7 +134,7 @@ public class UserDAO extends HttpServlet {
         
     	List<User> users = new ArrayList<>();
         
-    	String query = "SELECT * FROM User WHERE username != ? ORDER BY surname";
+    	String query = "SELECT * FROM user WHERE username != ? ORDER BY surname";
         try (PreparedStatement pStatement = con.prepareStatement(query)) {
         	
             pStatement.setString(1, excludedUser);

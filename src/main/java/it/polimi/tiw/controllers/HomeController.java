@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -46,6 +47,14 @@ public class HomeController extends HttpServlet {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
+	private Date getMeYesterday() {
+		return new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+	}
+	
+	private Date getGroupEndDate(Date creation, Integer duration) {
+		return new Date(creation.getTime() + duration * 24 * 60 * 60 * 1000);
+	}
+	
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
     
@@ -83,7 +92,25 @@ public class HomeController extends HttpServlet {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover othersGroups");
 			return;
-		} 
+		}
+    	
+    	
+    	// Filtering for active groups only
+    	for(Group group : myGroups){
+    		// if group ended before today (represented by 0), remove it from the groups
+    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
+    				.compareTo(getMeYesterday()) <= 0 ) {
+    			myGroups.remove(group);
+    		}
+    	}
+    	for(Group group : othersGroups){
+    		// if group ended before today (represented by 0), remove it from the groups
+    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
+    				.compareTo(getMeYesterday()) <= 0 ) {
+    			othersGroups.remove(group);
+    		}
+    	}
+    
     	
     	
     	// Redirect to the Home page

@@ -197,7 +197,7 @@ public class GroupDAO {
 
 
 
-public Group getGroupByID(Integer groupID) throws SQLException {
+	public Group getGroupByID(Integer groupID) throws SQLException {
 		Group group = null;
 		
 		String query = "SELECT * FROM groupTable WHERE ID = ?";
@@ -217,7 +217,7 @@ public Group getGroupByID(Integer groupID) throws SQLException {
 					group.setHowManyDays(result.getInt("howManyDays"));
 					group.setMinParts(result.getInt("minParts"));
 					group.setMaxParts(result.getInt("maxParts"));
-					group.setParticipants(findUsersByGroupID(result.getInt("ID")));
+					group.setParticipants(findUsersByGroupID(groupID));
 				}
 			}
 		}

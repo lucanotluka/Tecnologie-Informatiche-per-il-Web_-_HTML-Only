@@ -97,7 +97,11 @@ public class GetGroupDetails extends HttpServlet {
 				for(String username : myGroup.getParticipants()) {
 					user1 = userDAO.getUserByUsername(username);
 					invitedUsers.add(user1);
-				}
+				}				
+				
+				// Adding creator to the list for better displaying
+				invitedUsers.add(0, userDAO.getUserByUsername(myGroup.getCreator()));
+
 				
 			}catch (SQLException e) {
 				e.printStackTrace();
@@ -105,6 +109,7 @@ public class GetGroupDetails extends HttpServlet {
 				return;
 			}
 		}
+		
 		
 		
     	// Redirect to the Group Detail page

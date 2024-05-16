@@ -65,7 +65,7 @@ public class AnagraficaController extends HttpServlet {
 		
     	// --------------- Counter check ---------------
     	Integer counter = (Integer) session.getAttribute("counter");
-    	if(counter == 2 ) {    		
+    	if(counter == 3 ) {    		
     		// destroy session.Params
     		session.removeAttribute("title");;
     		session.removeAttribute("date");
@@ -155,6 +155,21 @@ public class AnagraficaController extends HttpServlet {
 		
     	
     	
+		// List of Users for Anagrafica page: will be used by Thymeleaf!
+    	String creator = user.getUsername();
+		UserDAO userDAO = new UserDAO(connection);
+		List<User> users = null;
+		try {
+			users = userDAO.findAllUsersExcept(creator);
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users");
+			return;
+		}
+		
+		
+		
+    	
+    	
     	// --------------- CONTROL & REDIRECT POLICIES ------------------
     	
 
@@ -175,12 +190,13 @@ public class AnagraficaController extends HttpServlet {
 		Integer duration = (Integer) session.getAttribute("duration");
 		Integer minParts = (Integer) session.getAttribute("minParts");
 		Integer maxParts = (Integer) session.getAttribute("maxParts");
-		String creator = user.getUsername();
+		
     	
 		
 		// Set the context variables to be shown by Thymeleaf
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("users", users);
 		
     		// TOO MANY!
     	if(howMany > maxParts-1){
@@ -192,10 +208,10 @@ public class AnagraficaController extends HttpServlet {
         	
     		
     		// put the invitedUsers into the request parameter
-    		request.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
+    		request.setAttribute("users", alreadyInvitedUsers);
     	
 			ctx.setVariable("error", "Troppi utenti selezionati! Eliminarne almeno " + toRemove);
-    		String path = "/WEB-INF/Anagrafica";
+    		String path = "/WEB-INF/Anagrafica.html";
     		templateEngine.process(path, ctx, response.getWriter());
     		return;
     		
@@ -210,10 +226,10 @@ public class AnagraficaController extends HttpServlet {
     		
     		
     		// put the invitedUsers into the request parameter
-    		request.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
+    		request.setAttribute("users", alreadyInvitedUsers);
     		
 			ctx.setVariable("error", "Troppi pochi utenti selezionati! Aggiungerne almeno " + toAdd);
-			String path = "/WEB-INF/Anagrafica";
+			String path = "/WEB-INF/Anagrafica.html";
     		templateEngine.process(path, ctx, response.getWriter());
     		return;
    

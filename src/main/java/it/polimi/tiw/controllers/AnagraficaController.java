@@ -2,9 +2,9 @@ package it.polimi.tiw.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -65,23 +65,20 @@ public class AnagraficaController extends HttpServlet {
 		
     	// --------------- Counter check ---------------
     	Integer counter = (Integer) session.getAttribute("counter");
-    	if(counter < 3 ) {
-    		counter++;
-    		session.setAttribute("counter", counter);
-    	} else {
-    		
+    	if(counter == 2 ) {    		
     		// destroy session.Params
     		session.removeAttribute("title");;
     		session.removeAttribute("date");
     		session.removeAttribute("duration");
     		session.removeAttribute("minParts");
     		session.removeAttribute("maxParts");
+    		session.removeAttribute("counter");
     		
-    		// redirect to CANCELLAZIONE
-    		
+    		// redirect to CANCELLAZIONE    		
 			String ctxpath = getServletContext().getContextPath();
 			String path = ctxpath + "/WEB-INF/Cancellazione.html";
     		response.sendRedirect(path);
+    		return;
     	}
     	// ------------- END of counter check -------------
     	
@@ -89,7 +86,7 @@ public class AnagraficaController extends HttpServlet {
     	// retrieving of group attributes from session
     	
 		String title = (String) session.getAttribute("title");
-		Date startDate = (Date) session.getAttribute("date");
+		Date startDate = (java.sql.Date) session.getAttribute("date");
 		Integer duration = (Integer) session.getAttribute("duration");
 		Integer minParts = (Integer) session.getAttribute("minParts");
 		Integer maxParts = (Integer) session.getAttribute("maxParts");
@@ -160,16 +157,17 @@ public class AnagraficaController extends HttpServlet {
     	
     	// --------------- CONTROL & REDIRECT POLICIES ------------------
     	
-    	String[] invitedUsers = request.getParameterValues("invitedUsers");
-    	
+
     	Integer howMany = 0;
     	List<String> alreadyInvitedUsers = null;
     	
-    	// When Creator has already selected some Users
-    	if(invitedUsers != null) {
-    		alreadyInvitedUsers = Arrays.asList(invitedUsers);
-    		howMany = alreadyInvitedUsers.size();
-    	}
+    	// When Creator has selected some Users
+		try {
+			alreadyInvitedUsers = Arrays.asList(request.getParameterValues("invitedUsers"));
+			howMany = alreadyInvitedUsers.size();
+		} catch (Exception e1) {
+			// None selected
+		}
   
     		
 		String title = (String) session.getAttribute("title");
@@ -179,28 +177,46 @@ public class AnagraficaController extends HttpServlet {
 		Integer maxParts = (Integer) session.getAttribute("maxParts");
 		String creator = user.getUsername();
     	
+		
+		// Set the context variables to be shown by Thymeleaf
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		
     		// TOO MANY!
-    	if(howMany > maxParts){
-    		Integer toRemove = howMany - maxParts;
+    	if(howMany > maxParts-1){
+    		Integer toRemove = howMany -1 - maxParts;
+    		
+    		Integer counter = (Integer) session.getAttribute("counter");
+    		counter++;
+    		session.setAttribute("counter", counter);
+        	
     		
     		// put the invitedUsers into the request parameter
     		request.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
-    		
-//			ctx.setVariable("error", "Troppi utenti selezionati! Eliminarne almeno " + toRemove);
-//			path = "/Anagrafica";
-//			templateEngine.process(path, ctx, response.getWriter());
+    	
+			ctx.setVariable("error", "Troppi utenti selezionati! Eliminarne almeno " + toRemove);
+    		String path = "/WEB-INF/Anagrafica";
+    		templateEngine.process(path, ctx, response.getWriter());
+    		return;
     		
     	} 	// TOO FEW! 
-    	else if (howMany < minParts) {
-    		Integer toAdd = minParts - howMany;
+    	else if (howMany < minParts-1) {
+    		Integer toAdd = minParts -1 - howMany;
+    		
+    		
+    		Integer counter = (Integer) session.getAttribute("counter");
+    		counter++;
+    		session.setAttribute("counter", counter);
+    		
     		
     		// put the invitedUsers into the request parameter
     		request.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
     		
-//			ctx.setVariable("error", "Troppi pochi utenti selezionati! Aggiungerne almeno " + toAdd);
-//			path = "/Anagrafica";
-//			templateEngine.process(path, ctx, response.getWriter());
-    		
+			ctx.setVariable("error", "Troppi pochi utenti selezionati! Aggiungerne almeno " + toAdd);
+			String path = "/WEB-INF/Anagrafica";
+    		templateEngine.process(path, ctx, response.getWriter());
+    		return;
+   
     	}
     	
     

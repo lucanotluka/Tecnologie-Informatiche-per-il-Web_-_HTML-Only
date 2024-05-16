@@ -1,11 +1,11 @@
 package it.polimi.tiw.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import it.polimi.tiw.beans.Group;
@@ -166,7 +166,7 @@ public class GroupDAO {
 			pStatement = con.prepareStatement(query);
 			
 			pStatement.setString(1, title);
-			pStatement.setDate(2, (java.sql.Date) startDate);
+			pStatement.setDate(2, startDate);
 			pStatement.setInt(3, duration);
 			pStatement.setInt(4, minParts);
 			pStatement.setInt(5, maxParts);

@@ -16,12 +16,13 @@
 
 	<h3> Group info </h3>
 	<div>
-		<p th:text=" ${'Title: ' + group.title}"></p>
+		<p th:text=" ${'Number of times you are compiling this form: ' + session.counter }"></p>
+		<p th:text=" ${'Title: ' + session.title}"></p>
 		<p th:text=" ${'Creator: ' + session.user.name + ' ' + session.user.surname}"></p>
-		<p th:text="${'Start Date: ' + group.creationDate}"></p>
-		<p th:text="${'Duration (in days): ' + group.howManyDays}"></p>
-		<p th:text="${'Minimum participants (including creator!): ' + group.minParts}"></p>
-		<p th:text="${'Maximum participants: ' + group.maxParts}"></p>
+		<p th:text="${'Start Date: ' + session.date}"></p>
+		<p th:text="${'Duration (in days): ' + session.duration}"></p>
+		<p th:text="${'Minimum participants (including creator!): ' + session.minParts}"></p>
+		<p th:text="${'Maximum participants: ' + session.maxParts}"></p>
 	</div>
 
 
@@ -33,16 +34,15 @@
 					<tr>
 						<th>Name</th>
 						<th>Surname</th>
-						<th>Select</th>	
+						<th>Invite</th>	
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="u : ${users}">
-						<td th:text="${u.name}"></td>
+						<td th:text="${ u.name }"></td>
 						<td th:text="${ u.surname }"></td>
 						<td>
-							<input type="checkbox" name="invitedUsers" th:value="${u.username}" 
-							th:checked="${alreadyInvitedUsers.contains(u.username)}"/>
+							<input type="checkbox" name="invitedUsers" th:value="${u.username}"/>
 						</td>
 						
 					</tr>

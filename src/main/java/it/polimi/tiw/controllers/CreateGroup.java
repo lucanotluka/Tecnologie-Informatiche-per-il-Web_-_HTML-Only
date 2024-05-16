@@ -2,10 +2,10 @@ package it.polimi.tiw.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -68,7 +68,8 @@ public class CreateGroup extends HttpServlet {
 			duration = Integer.parseInt(request.getParameter("duration"));
 			title = StringEscapeUtils.escapeJava(request.getParameter("title"));
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			startDate = (Date) sdf.parse(request.getParameter("date"));
+			java.util.Date utilDate = sdf.parse(request.getParameter("date"));
+			startDate = new java.sql.Date(utilDate.getTime());
 			minParts = Integer.parseInt(request.getParameter("minParts"));
 			maxParts = Integer.parseInt(request.getParameter("maxParts"));
 			

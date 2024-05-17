@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,25 +63,6 @@ public class AnagraficaController extends HttpServlet {
     	User user = (User) session.getAttribute("user");
     	// End of Session persistency check
 		
-		
-    	// --------------- Counter check ---------------
-    	Integer counter = (Integer) session.getAttribute("counter");
-    	if(counter == 3 ) {    		
-    		// destroy session.Params
-    		session.removeAttribute("title");;
-    		session.removeAttribute("date");
-    		session.removeAttribute("duration");
-    		session.removeAttribute("minParts");
-    		session.removeAttribute("maxParts");
-    		session.removeAttribute("counter");
-    		
-    		// redirect to CANCELLAZIONE    		
-			String ctxpath = getServletContext().getContextPath();
-			String path = ctxpath + "/WEB-INF/Cancellazione.html";
-    		response.sendRedirect(path);
-    		return;
-    	}
-    	// ------------- END of counter check -------------
     	
         	 
     	// retrieving of group attributes from session
@@ -96,14 +78,7 @@ public class AnagraficaController extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
-	
-		Group group = new Group();
-		group.setTitle(title);
-		group.setCreationDate(startDate);
-		group.setHowManyDays(duration);
-		group.setMinParts(minParts);
-		group.setMaxParts(maxParts);
-		
+
 		
 		// List of Users for Anagrafica page: will be used by Thymeleaf!
 		
@@ -120,20 +95,11 @@ public class AnagraficaController extends HttpServlet {
 		// Set the context variables to be shown by Thymeleaf
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("users", users);
-		ctx.setVariable("group", group);
-		
-		
-		// The non-first time we'll be here, there will be a List of already selected Users.
-		if(counter > 1) {
-			
-			// the array of pre-selected usernames
-			String[] invitedUsers = request.getParameterValues("invitedUsers");
-			
-			// send the invitedUsers to Thymeleaf: if u.username is in invitedUsers, check V
-			ctx.setVariable("alreadyInvitedUsers", invitedUsers);
-			
-		}	
+		ctx.setVariable("users", users);		
+
+		int ctr = (int) session.getAttribute("getCounter");
+		ctr ++;
+		session.setAttribute("getCounter", ctr);
 		
 		String path = "/WEB-INF/Anagrafica.html";
 		templateEngine.process(path, ctx, response.getWriter());
@@ -155,7 +121,42 @@ public class AnagraficaController extends HttpServlet {
 		
     	
     	
+    	
+    	// --------------- Counter check ---------------
+    	Integer counter = (Integer) session.getAttribute("counter");
+    	if(counter >= 3 ) {    		
+    		// destroy session.Params
+    		session.removeAttribute("title");;
+    		session.removeAttribute("date");
+    		session.removeAttribute("duration");
+    		session.removeAttribute("minParts");
+    		session.removeAttribute("maxParts");
+    		session.removeAttribute("counter");
+    		
+    		// redirect to CANCELLAZIONE    		
+			String ctxpath = getServletContext().getContextPath();
+			String path = ctxpath + "/WEB-INF/Cancellazione.html";
+    		response.sendRedirect(path);
+    		return;
+    	}
+    	// ------------- END of counter check -------------
+    	
+    	
+    			
+    	
+    	
+    	// --------------- CONTROL & REDIRECT POLICIES ------------------
+    	
+		
+		
+		// Set the context variables to be shown by Thymeleaf
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+
+		
+		
 		// List of Users for Anagrafica page: will be used by Thymeleaf!
+    	
     	String creator = user.getUsername();
 		UserDAO userDAO = new UserDAO(connection);
 		List<User> users = null;
@@ -165,50 +166,53 @@ public class AnagraficaController extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover all users");
 			return;
 		}
+		ctx.setVariable("users", users);
 		
 		
 		
-    	
-    	
-    	// --------------- CONTROL & REDIRECT POLICIES ------------------
-    	
-
-    	Integer howMany = 0;
-    	List<String> alreadyInvitedUsers = null;
-    	
-    	// When Creator has selected some Users
-		try {
-			alreadyInvitedUsers = Arrays.asList(request.getParameterValues("invitedUsers"));
-			howMany = alreadyInvitedUsers.size();
-		} catch (Exception e1) {
-			// None selected
-		}
-  
-    		
+		
 		String title = (String) session.getAttribute("title");
 		Date startDate = (Date) session.getAttribute("date");
 		Integer duration = (Integer) session.getAttribute("duration");
 		Integer minParts = (Integer) session.getAttribute("minParts");
 		Integer maxParts = (Integer) session.getAttribute("maxParts");
 		
-    	
 		
-		// Set the context variables to be shown by Thymeleaf
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("users", users);
+    	Integer howMany = 0;
+    	List<String> alreadyInvitedUsers = null;
+    	
+    	
+		// The non-first time we'll be here, there will be a List of already selected Users.
+		if(counter > 1) {
+
+	    	// When Creator has selected some Users
+			try {
+				alreadyInvitedUsers = Arrays.asList(request.getParameterValues("invitedUsers"));
+				howMany = alreadyInvitedUsers.size();
+				
+				// send the invitedUsers to Thymeleaf: if u.username is in invitedUsers, check V
+				session.setAttribute("alreadyInvitedUsers", alreadyInvitedUsers);
+			
+			} catch (Exception e1) {
+				// None selected
+			}
+			
+		}
+  
+    	
+
 		
     		// TOO MANY!
     	if(howMany > maxParts-1){
     		Integer toRemove = howMany -1 - maxParts;
+    		toRemove = - toRemove;	// positive value
     		
-    		Integer counter = (Integer) session.getAttribute("counter");
     		counter++;
     		session.setAttribute("counter", counter);
         	
     		
-    		// put the invitedUsers into the request parameter
-    		request.setAttribute("users", alreadyInvitedUsers);
+//    		// put the invitedUsers into the request parameter
+//    		request.setAttribute("users", alreadyInvitedUsers);
     	
 			ctx.setVariable("error", "Troppi utenti selezionati! Eliminarne almeno " + toRemove);
     		String path = "/WEB-INF/Anagrafica.html";
@@ -219,14 +223,12 @@ public class AnagraficaController extends HttpServlet {
     	else if (howMany < minParts-1) {
     		Integer toAdd = minParts -1 - howMany;
     		
-    		
-    		Integer counter = (Integer) session.getAttribute("counter");
     		counter++;
     		session.setAttribute("counter", counter);
     		
     		
-    		// put the invitedUsers into the request parameter
-    		request.setAttribute("users", alreadyInvitedUsers);
+//    		// put the invitedUsers into the request parameter
+//    		request.setAttribute("users", alreadyInvitedUsers);
     		
 			ctx.setVariable("error", "Troppi pochi utenti selezionati! Aggiungerne almeno " + toAdd);
 			String path = "/WEB-INF/Anagrafica.html";

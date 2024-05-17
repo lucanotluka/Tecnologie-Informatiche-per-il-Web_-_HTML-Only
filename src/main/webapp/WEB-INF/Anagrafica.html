@@ -16,7 +16,8 @@
 
 	<h3> Group info </h3>
 	<div>
-		<p th:text=" ${'Number of times you are compiling this form: ' + session.counter }"></p>
+		<p th:text=" ${'TIMES of GET requests: ' + session.getCounter }"></p>
+		<p th:text=" ${'TIMES of trying to compile this form: ' + session.counter }"></p>
 		<p th:text=" ${'Title: ' + session.title}"></p>
 		<p th:text=" ${'Creator: ' + session.user.name + ' ' + session.user.surname}"></p>
 		<p th:text="${'Start Date: ' + session.date}"></p>
@@ -34,6 +35,7 @@
 					<tr>
 						<th>Name</th>
 						<th>Surname</th>
+						<th>Username</th>
 						<th>Invite</th>	
 					</tr>
 				</thead>
@@ -41,8 +43,10 @@
 					<tr th:each="u : ${users}">
 						<td th:text="${ u.name }"></td>
 						<td th:text="${ u.surname }"></td>
+						<td th:text="${ u.username }"></td>
 						<td>
-							<input type="checkbox" name="invitedUsers" th:value="${u.username}"/>
+							<input type="checkbox" name="invitedUsers" th:value="${u.username}" 
+							th:checked="${session.counter > 1/>
 						</td>
 						
 					</tr>

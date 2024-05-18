@@ -98,9 +98,7 @@ public class CreateGroup extends HttpServlet {
 		// initialize counter
 		
 		Integer one = 1;
-		Integer zero = 0 ;
 		session.setAttribute("counter", one);
-		session.setAttribute("getCounter", zero);
 		
 		
 		// redirect 

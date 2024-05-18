@@ -112,13 +112,22 @@ public class GroupDAO {
 		try {
 			
 			// 1st step: save group info and retrieve its ID (auto-generated)
+			System.out.println("Entered 1st step");
 			
 			int groupID = insertGroupOnly(title, startDate, duration, minParts, maxParts, creator);
 			if(groupID == -1) throw new SQLException("GroupID is null");
 		
+			System.out.println("GroupID is " + groupID);
+			
+			System.out.println("Entered 2nd step");
+			
 			// 2nd step: save invited Users into user2group
 			for(String username : invitatedUsers) {
+				
+				System.out.println("Inserted " + username);
+				
 				insertUser2Group(groupID, username);
+				
 			}
 		
 			// commit if everything is ok
@@ -156,7 +165,7 @@ public class GroupDAO {
 	
 	private int insertGroupOnly(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator) throws SQLException {
 		
-		String query = "INSERT into groupTable (title, startDate, duration, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
+		String query = "INSERT into groupTable (title, creationDate, howManyDays, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
 		PreparedStatement pStatement = null;
 		
 		int generatedGroupID = -1;
@@ -172,23 +181,40 @@ public class GroupDAO {
 			pStatement.setInt(5, maxParts);
 			pStatement.setString(6, creator);
 			
+			System.out.println("Trying 1st prepared statement");
 			
 
 			int rowsAffected = pStatement.executeUpdate();
 			
 	        if (rowsAffected > 0) {
+	        	
+	        	System.out.println("Rows affected: " + rowsAffected);
+	        	
 	            try (ResultSet generatedKeys = pStatement.getGeneratedKeys()) {
-	                if (generatedKeys.next()) {
-	                    generatedGroupID = generatedKeys.getInt(1); // Retrieve the auto-generated GroupID
+	                
+	            	System.out.println("ResultSet: " + generatedKeys.toString());
+	            	
+	            	boolean hasGeneratedKey = generatedKeys.next();
+	            	
+	            	if (hasGeneratedKey) {
+	                	
+	            		System.out.println("Has GeneratedKey: " + hasGeneratedKey);
+	            		
+	                	// Retrieve the auto-generated GroupID
+	                    generatedGroupID = generatedKeys.getInt(1);
+	                    
+	                    
 	                    // Use generatedGroupID as needed
 	                    if(generatedGroupID == 0) generatedGroupID = -1;
 	                }
 	            } catch (SQLException e) {
+	            	System.out.println("Peculiar problems in finding group ID");
 	    			throw e;
 	    		}	
 	        }
 			
 		} catch (SQLException e) {
+			System.out.println("Generic Problems in making group only");
 			throw e;
 		}		
 

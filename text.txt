@@ -1,4 +1,0 @@
-COSE DA TENERE SCRITTE
-
-1. roba che non so se funziona per tenere giaà checkati quelli in alreadyInvited:
-	th:checked="${alreadyInvitedUsers.contains(u.username)}"

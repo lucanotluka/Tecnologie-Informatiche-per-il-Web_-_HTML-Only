@@ -106,6 +106,8 @@ public class GroupDAO {
 	
 	public void createGroup(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator, List<String> invitatedUsers) throws SQLException {
 		
+		int groupID = -1;
+		
 		// disable autocommit
 		con.setAutoCommit(false);
 		
@@ -114,21 +116,14 @@ public class GroupDAO {
 			// 1st step: save group info and retrieve its ID (auto-generated)
 			System.out.println("Entered 1st step");
 			
-			int groupID = insertGroupOnly(title, startDate, duration, minParts, maxParts, creator);
-			if(groupID == -1) throw new SQLException("GroupID is null");
+			int ID = getLastGroupID() + 1;
+			
+			insertGroupOnly(title, startDate, duration, minParts, maxParts, creator);
 		
-			System.out.println("GroupID is " + groupID);
+			System.out.println("GroupID is " + ID);
 			
-			System.out.println("Entered 2nd step");
-			
-			// 2nd step: save invited Users into user2group
-			for(String username : invitatedUsers) {
-				
-				System.out.println("Inserted " + username);
-				
-				insertUser2Group(groupID, username);
-				
-			}
+			groupID = ID;
+
 		
 			// commit if everything is ok
 			con.commit();
@@ -137,13 +132,78 @@ public class GroupDAO {
 			con.rollback();
 			throw e;
 			
-		} 
+		} finally {
+			// enable autocommit again
+			con.setAutoCommit(true);
+		}
 		
-		// enable autocommit again
-		con.setAutoCommit(true);
+		
+		// disable autocommit
+		con.setAutoCommit(false);
+		
+		try {
+			
+
+			System.out.println("Entered 2nd step");
+			
+			// 2nd step: save invited Users into user2group
+			
+			if(invitatedUsers != null) {
+			for(String username : invitatedUsers) {
+				
+				insertUser2Group(groupID, username);
+
+				System.out.println("[Group "+ groupID +"]: inserted " + username);
+			}
+			}
+			
+		
+			// commit if everything is ok
+			con.commit();
+			
+		} catch (SQLException e) {			
+			con.rollback();
+			throw e;
+			
+		} finally {
+			// enable autocommit again
+			con.setAutoCommit(true);
+		}
+		
+
 					
 	}
 	
+	private int getLastGroupID() throws SQLException{
+		
+		int lastGroupId = -1;
+
+        String query = "SELECT MAX(ID) AS last_group_id FROM groupTable";
+        
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        
+        try {
+        	
+        	statement = con.prepareStatement(query);
+        	resultSet = statement.executeQuery();
+        	
+            if (resultSet.next()) {
+                lastGroupId = resultSet.getInt("last_group_id");
+                System.out.println("Last group ID: " + lastGroupId);
+            } else {
+                System.out.println("No groups found.");
+            }
+        } catch(SQLException e) {
+        	throw e;
+        }
+                  
+
+		return lastGroupId;
+	}
+
+
+
 	private void insertUser2Group(int groupID, String username) throws SQLException {
 		
 		String query = "INSERT into user2group (IDgroup, username)   VALUES(?, ?)";
@@ -158,17 +218,17 @@ public class GroupDAO {
 			pStatement.executeUpdate();
 			
 		} catch (SQLException e) {
+			System.out.println("Generic Problems in inserting " + username + " into group " + groupID );
 			throw e;
 		}
 		
 	}
 	
-	private int insertGroupOnly(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator) throws SQLException {
+	private void insertGroupOnly(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator) throws SQLException {
 		
 		String query = "INSERT into groupTable (title, creationDate, howManyDays, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
 		PreparedStatement pStatement = null;
 		
-		int generatedGroupID = -1;
 		
 		try {
 			
@@ -182,43 +242,16 @@ public class GroupDAO {
 			pStatement.setString(6, creator);
 			
 			System.out.println("Trying 1st prepared statement");
-			
 
-			int rowsAffected = pStatement.executeUpdate();
-			
-	        if (rowsAffected > 0) {
-	        	
-	        	System.out.println("Rows affected: " + rowsAffected);
-	        	
-	            try (ResultSet generatedKeys = pStatement.getGeneratedKeys()) {
-	                
-	            	System.out.println("ResultSet: " + generatedKeys.toString());
-	            	
-	            	boolean hasGeneratedKey = generatedKeys.next();
-	            	
-	            	if (hasGeneratedKey) {
-	                	
-	            		System.out.println("Has GeneratedKey: " + hasGeneratedKey);
-	            		
-	                	// Retrieve the auto-generated GroupID
-	                    generatedGroupID = generatedKeys.getInt(1);
-	                    
-	                    
-	                    // Use generatedGroupID as needed
-	                    if(generatedGroupID == 0) generatedGroupID = -1;
-	                }
-	            } catch (SQLException e) {
-	            	System.out.println("Peculiar problems in finding group ID");
-	    			throw e;
-	    		}	
-	        }
+			pStatement.executeUpdate();
+
+			System.out.println("1st statement OK");
 			
 		} catch (SQLException e) {
 			System.out.println("Generic Problems in making group only");
 			throw e;
 		}		
 
-		return generatedGroupID; 
 	}
 
 

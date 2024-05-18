@@ -74,7 +74,7 @@ public class CreateGroup extends HttpServlet {
 			maxParts = Integer.parseInt(request.getParameter("maxParts"));
 			
 			isBadRequest = duration == null || minParts == null || maxParts == null 
-					|| duration <= 0 || maxParts <= minParts || minParts <= 0
+					|| duration <= 0 || maxParts < minParts || minParts <= 0
 					|| title == null || title.isEmpty() 
 					|| getMeYesterday().after(startDate);
 		} catch (NumberFormatException | NullPointerException | ParseException e) {

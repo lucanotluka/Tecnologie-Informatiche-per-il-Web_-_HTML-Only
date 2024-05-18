@@ -21,7 +21,7 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.beans.Group;
+
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.dao.GroupDAO;
 import it.polimi.tiw.dao.UserDAO;
@@ -273,10 +273,8 @@ public class AnagraficaController extends HttpServlet {
 		
     	
     	// THEN, REDIRECT TO HOME
-    	String path = getServletContext().getContextPath() + "/Home.html";
-    	response.sendRedirect(path);
-    	
-    		
+    	String path = getServletContext().getContextPath() + "/Home";
+    	response.sendRedirect(path);    		
   	}
 
 

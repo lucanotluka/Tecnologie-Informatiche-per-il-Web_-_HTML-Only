@@ -1,0 +1,40 @@
+table, th, tr, .container {
+  border: 3px solid black;
+}
+header {
+    background-color: #f9c4d2;
+    padding: 20px;
+}
+
+.container {
+	display: flex;
+    justify-content: space-between;
+    align-items: left;
+}
+
+.form-column {
+  		flex: 	1;
+    padding: 20px;
+    
+    border: 1px solid #ddd;
+    margin-right: 10px; 
+}
+
+.text-column {
+  		flex: 	1;
+    padding: 20px;
+    align-items: center;
+    border: 1px solid #ddd;
+    margin-right: 10px; 
+    text-align: left;
+}
+
+
+input[type="submit"] {
+    background-color: #3CBC8D;
+    color: white; 
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px; 
+    cursor: pointer; 
+}

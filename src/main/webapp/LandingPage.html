@@ -2,58 +2,57 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-
-    <style>
-		header {
-		    background-color: #f9c4d2;
-		    padding: 20px;
-		}
-		
-		.container {
-    		display: flex;
-		    justify-content: space-between;
-		    align-items: left;
-		}
-		
-		.form-column {
-    		flex: 	1;
-		    padding: 20px;
-		    
-		    border: 1px solid #ddd;
-		    margin-right: 10px; 
-		}
-		
-		.text-column {
-    		flex: 	1;
-		    padding: 20px;
-		    align-items: center;
-		    border: 1px solid #ddd;
-		    margin-right: 10px; 
-		    text-align: left;
-		}
-		
-		
-		input[type="submit"] {
-		    background-color: #3CBC8D; /* Choose your desired color */
-		    color: white; /* Text color */
-		    border: none; /* Remove the default button border */
-		    border-radius: 4px; /* Rounded corners */
-		    padding: 8px 16px; /* Add some padding for spacing */
-		    cursor: pointer; /* Show pointer cursor on hover */
-		}
-		
-		input[type="text"] {
-		    padding: 8px 16px; /* Add some padding for spacing */
-		    cursor: pointer; /* Show pointer cursor on hover */
-		}
-    </style>
-    
+  	<link rel="stylesheet" type="text/css" media="all" href="../CSS/mystyle.css" th:href="@{/CSS/mystyle.css}" />
     <title>LandingPage</title>
+    <style>
+    table, th, tr, .container {
+  border: 1px solid black;
+}
+header {
+    background-color: #f9c4d2;
+    padding: 20px;
+}
+
+
+.container {
+	display: flex;
+    justify-content: space-between;
+    align-items: left;
+}
+
+.form-column {
+  		flex: 	1;
+    padding: 20px;
+    
+    border: 1px solid #ddd;
+    margin-right: 10px; 
+}
+
+.text-column {
+  		flex: 	1;
+    padding: 20px;
+    align-items: center;
+    border: 1px solid #ddd;
+    margin-right: 10px; 
+    text-align: left;
+}
+
+
+input[type="submit"] {
+    background-color: #3CBC8D;
+    color: white; 
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px; 
+    cursor: pointer; 
+}
+     </style>   
+    
 </head>
 <body>
 	<header>
-		<h1>Welcome to the Group Management Website</h1>
-		<h4>Designed and Build by Luca Gritti</h4>
+		<h1>	 // Welcome to the Group Management Website</h1>
+		<h4>			Designed and Build by Luca Gritti</h4>
 	</header>
 	
 	<div class="container">

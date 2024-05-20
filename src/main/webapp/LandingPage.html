@@ -2,30 +2,85 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>LandingPage</title>
+
+    <style>
+		header {
+		    background-color: #f9c4d2;
+		    padding: 20px;
+		}
+		
+		.container {
+    		display: flex;
+		    justify-content: space-between;
+		    align-items: left;
+		}
+		
+		.form-column {
+    		flex: 	1;
+		    padding: 20px;
+		    
+		    border: 1px solid #ddd;
+		    margin-right: 10px; 
+		}
+		
+		.text-column {
+    		flex: 	1;
+		    padding: 20px;
+		    align-items: center;
+		    border: 1px solid #ddd;
+		    margin-right: 10px; 
+		    text-align: left;
+		}
+		
+		
+		input[type="submit"] {
+		    background-color: #3CBC8D; /* Choose your desired color */
+		    color: white; /* Text color */
+		    border: none; /* Remove the default button border */
+		    border-radius: 4px; /* Rounded corners */
+		    padding: 8px 16px; /* Add some padding for spacing */
+		    cursor: pointer; /* Show pointer cursor on hover */
+		}
+		
+		input[type="text"] {
+		    padding: 8px 16px; /* Add some padding for spacing */
+		    cursor: pointer; /* Show pointer cursor on hover */
+		}
+    </style>
+    
+    <title>LandingPage</title>
 </head>
 <body>
-
-	<h1>Welcome to the Group Management Website</h1>
-	<h4>Designed and Build by Luca Gritti</h4>
-
-	<form action="LoginController" method="POST">
-		Username: <input type="text" name="username" required><br>
-		Password: <input type="password" name="password" required><br>
-		<input type="submit" value="login">		
-		<p th:text=" ${errorMsg}"></p>
-	</form>
+	<header>
+		<h1>Welcome to the Group Management Website</h1>
+		<h4>Designed and Build by Luca Gritti</h4>
+	</header>
 	
-	<form action="RegisterController" method="POST">
-		Name: <input type="text" name="name" required><br>
-		Surname: <input type="text" name="surname" required><br>
-		Username: <input type="text" name="username" required><br>
-		Email: <input type="email" name="email" required><br>
-		Password: <input type="password" name="password" required><br>
-		Confirm Password: <input type="password" name="confirmPassword" required><br>
-		<input type="submit" value="register">
-		<p th:text=" ${successMsg}"></p>		
-	</form>
-
+	<div class="container">
+        <div class="form-column">
+			<form action="LoginController" method="POST">
+				<div class="text-column">
+					Username: <input type="text" name="username" required><br>
+					Password: <input type="password" name="password" required><br>
+				</div>
+				<input type="submit" value="Login">		
+				<p th:text=" ${errorMsg}"></p>
+			</form>
+		</div>	
+		<div class="form-column">
+			<form action="RegisterController" method="POST">
+				<div class="text-column">
+					Name: <input type="text" name="name" required><br>
+					Surname: <input type="text" name="surname" required><br>
+					Username: <input type="text" name="username" required><br>
+					Email: <input type="email" name="email" required><br>
+					Password: <input type="password" name="password" required><br>
+					Confirm Password: <input type="password" name="confirmPassword" required><br>
+				</div>
+				<input type="submit" value="Register">
+				<p th:text=" ${successMsg}"></p>		
+			</form>
+		</div>
+	</div>	
 </body>
 </html>

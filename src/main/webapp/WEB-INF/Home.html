@@ -13,7 +13,17 @@
 
 
 
-	<h3> // Your groups </h3>
+<table>
+
+<thead><tr>
+	<th><h3> // Your groups </h3></th>
+	<th><h3> // Your invitations </h3></th>
+</tr></thead>
+
+<tbody><tr>
+	
+	<td>
+	
 	<div th:if="${myGroups.size() >0}">
 		<table>
 			<thead>
@@ -35,9 +45,10 @@
 		</table>
 	</div>  
 	<div th:if="${myGroups.size() == 0}"> You havent any active group. </div>
+	
+	</td>
+	<td>
 
-
-	<h3> // Your invitations </h3>
 	<div th:if="${othersGroups.size() >0}">
 		<table>
 			<thead>
@@ -60,6 +71,13 @@
 	</div>  
 	<div th:if="${othersGroups.size() == 0}"> You havent been invited to any active group. </div>
 
+</td>
+
+</tr></tbody>
+
+</table>
+
+
 	<h3> // Create a new group! </h3>
 	<div>
 		<form action="#" th:action="@{/CreateGroup}" method="POST">
@@ -79,7 +97,7 @@
 					Minimum participants: <input type="number" name="minParts" min=0 required />
 				</p>
 				<p>
-					Maximum participants: <input type="number" name="maxParts" min="[[${minParts+1}]]" required />
+					Maximum participants: <input type="number" name="maxParts" min=1 required />
 				</p>
 
 				<input type="submit" name="Send">

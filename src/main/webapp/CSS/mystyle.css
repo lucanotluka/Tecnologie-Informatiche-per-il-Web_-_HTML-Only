@@ -1,10 +1,10 @@
 table, th, tr, .container {
-  border: 3px solid black;
+  border: 1px solid black;
 }
 header {
-    background-color: #f9c4d2;
     padding: 20px;
 }
+
 
 .container {
 	display: flex;
@@ -15,9 +15,9 @@ header {
 .form-column {
   		flex: 	1;
     padding: 20px;
-    
+
     border: 1px solid #ddd;
-    margin-right: 10px; 
+    margin: 10px;
 }
 
 .text-column {
@@ -37,4 +37,6 @@ input[type="submit"] {
     border-radius: 4px;
     padding: 8px 16px; 
     cursor: pointer; 
+    margin-top: 10px;
+    margin-left: 75%;
 }

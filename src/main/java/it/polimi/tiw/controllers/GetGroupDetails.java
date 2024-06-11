@@ -30,13 +30,14 @@ public class GetGroupDetails extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
-       
+
 
 
     public GetGroupDetails() {
         super();
     }
-    
+
+	@Override
 	public void init() throws ServletException {
 		ServletContext servletContext = getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
@@ -47,7 +48,8 @@ public class GetGroupDetails extends HttpServlet {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
-	
+
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     	// ---------------------- SESSION CHECK ------------------------
@@ -60,8 +62,8 @@ public class GetGroupDetails extends HttpServlet {
     	}
     	User user = (User) session.getAttribute("user");
     	// End of Session persistency check
-    	
-    	
+
+
 		// get and check params
 		Integer groupID = null;
 		try {
@@ -70,12 +72,12 @@ public class GetGroupDetails extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
-    	
+
 		// Retrieve all the infos given GroupID
 		GroupDAO groupDAO = new GroupDAO(connection);
 		Group myGroup = null;
-		List<User> invitedUsers = new ArrayList<User>();
-		
+		List<User> invitedUsers = new ArrayList<>();
+
 		try {
 			myGroup = groupDAO.getGroupByID(groupID);
 			if(myGroup == null) throw new Exception("Group recovered but null");
@@ -88,43 +90,44 @@ public class GetGroupDetails extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Group recovered but null");
 			return;
 		}
-		
+
 		if(myGroup.getParticipants().size() > 0) {
 			try {
 				UserDAO userDAO = new UserDAO(connection);
 				User user1 = null;
-				
+
 				for(String username : myGroup.getParticipants()) {
 					user1 = userDAO.getUserByUsername(username);
 					invitedUsers.add(user1);
-				}				
-				
+				}
+
 				// Adding creator to the list for better displaying
 				invitedUsers.add(0, userDAO.getUserByUsername(myGroup.getCreator()));
 
-				
+
 			}catch (SQLException e) {
 				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover invited Users");
 				return;
 			}
 		}
-		
-		
-		
+
+
+
     	// Redirect to the Group Detail page
     	// and add Group to the parameters!!
-    	
+
 		String path = "/WEB-INF/DettagliGruppo.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("group", myGroup);
 		ctx.setVariable("users", invitedUsers);
 		templateEngine.process(path, ctx, response.getWriter());
-		
+
 	}
 
-	
+
+	@Override
 	public void destroy() {
 		try {
 			ConnectionHandler.closeConnection(connection);

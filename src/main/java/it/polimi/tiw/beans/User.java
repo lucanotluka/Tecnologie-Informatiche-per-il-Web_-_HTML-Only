@@ -1,7 +1,7 @@
 package it.polimi.tiw.beans;
 
 public class User {
-	
+
 	private String username;
 	private String name;
 	private String surname;
@@ -15,7 +15,7 @@ public class User {
 		this.email = email;
 		this.password = password;
 	}
-	
+
 	public User() {}
 
 	public String getName() {

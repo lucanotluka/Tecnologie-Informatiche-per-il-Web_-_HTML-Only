@@ -18,22 +18,22 @@ public class GroupDAO {
 		this.con = connection;
 	}
 
-	
-	
+
+
 	public List<Group> findMyGroups(String user) throws SQLException  {
-		
-		List<Group> myGroups = new ArrayList<Group>();
-		
+
+		List<Group> myGroups = new ArrayList<>();
+
 		String query = "SELECT * from groupTable where creator = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
-			
+
 			pStatement.setString(1, user);	// the user is the creator we wanna find
-			
+
 			try (ResultSet result = pStatement.executeQuery();) {
 				while (result.next()) {
-					
+
 					Group group = new Group();
-			
+
 					group.setCreator(user);
 					group.setID(result.getInt("ID"));
 					group.setTitle(result.getString("title"));
@@ -42,7 +42,7 @@ public class GroupDAO {
 					group.setMinParts(result.getInt("minParts"));
 					group.setMaxParts(result.getInt("maxParts"));
 					group.setParticipants(findUsersByGroupID(result.getInt("ID")));
-					
+
 					myGroups.add(group);
 				}
 			}
@@ -51,14 +51,14 @@ public class GroupDAO {
 	}
 
 	private List<String> findUsersByGroupID(int ID) throws SQLException {
-		
-		List<String> users = new ArrayList<String>();
-		
+
+		List<String> users = new ArrayList<>();
+
 		String query = "SELECT * from user2group where IDgroup = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
-			
+
 			pStatement.setInt(1, ID);
-			
+
 			try (ResultSet result = pStatement.executeQuery();) {
 				while (result.next()) {
 					String invitedUser = result.getString("username");
@@ -68,24 +68,24 @@ public class GroupDAO {
 		}
 		return users;
 	}
-	
+
 	public List<Group> findOthersGroup(String user) throws SQLException {
-		
-		List<Group> othersGroups = new ArrayList<Group>();
-					// gotta retrieve groups where user isnt the creator 
+
+		List<Group> othersGroups = new ArrayList<>();
+					// gotta retrieve groups where user isnt the creator
 					// and where invitations contains user
-					// and group.ID = invitations.groupID 
+					// and group.ID = invitations.groupID
 		String query = "SELECT * from groupTable INNER JOIN user2group ON groupTable.ID = user2group.IDgroup "
 				+ "WHERE groupTable.creator != ? AND user2group.username = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 			pStatement.setString(1, user);
 			pStatement.setString(2, user);
-			
+
 			try (ResultSet result = pStatement.executeQuery();) {
 				while (result.next()) {
-					
+
 					Group group = new Group();
-					
+
 					group.setCreator(result.getString("creator"));
 					group.setID(result.getInt("ID"));
 					group.setTitle(result.getString("title"));
@@ -94,36 +94,36 @@ public class GroupDAO {
 					group.setMinParts(result.getInt("minParts"));
 					group.setMaxParts(result.getInt("maxParts"));
 					group.setParticipants(findUsersByGroupID(result.getInt("ID")));
-					
-					othersGroups.add(group);	
+
+					othersGroups.add(group);
 				}
 			}
 		}
 		return othersGroups;
 	}
 
-	
-	
+
+
 	public void createGroup(String title, Date startDate, Integer duration, Integer minParts, Integer maxParts, String creator, List<String> invitatedUsers) throws SQLException {
-		
+
 		int groupID = -1;
-		
+
 		// disable autocommit
 		con.setAutoCommit(false);
-		
+
 		// prepare all the queries
 		String query1 = "SELECT MAX(ID) AS last_group_id FROM groupTable";
 		PreparedStatement statement1 = null;
         ResultSet resultSet1 = null;
-		
+
 		String query2 = "INSERT into groupTable (title, creationDate, howManyDays, minParts, maxParts, creator)   VALUES(?, ?, ?, ?, ?, ?)";
 		PreparedStatement pStatement2 = null;
-        
+
         String query3 = "INSERT into user2group (IDgroup, username)   VALUES(?, ?)";
 		PreparedStatement pStatement3 = null;
-        
+
 		try {
-			
+
 			// 1st step: save group info and retrieve its ID (auto-generated)
 			System.out.println("Entered 1st step");
 
@@ -136,11 +136,11 @@ public class GroupDAO {
                 System.out.println("No groups found.");
                 throw new SQLException();
             }
-			
+
 			// the new actual groupID
 			groupID++;
 			System.out.println("New group ID: " + groupID);
-			
+
 			pStatement2 = con.prepareStatement(query2);
 			pStatement2.setString(1, title);
 			pStatement2.setDate(2, startDate);
@@ -149,13 +149,13 @@ public class GroupDAO {
 			pStatement2.setInt(5, maxParts);
 			pStatement2.setString(6, creator);
 			pStatement2.executeUpdate();
-			
+
 			System.out.println("1st statement OK");
-			
-			
+
+
 			// if Creator alone, doesnt need to invite
 			if(invitatedUsers != null) {
-				
+
 				// 2nd step: save invited Users into user2group
 				System.out.println("Entered 2nd step");
 				pStatement3 = con.prepareStatement(query3);
@@ -172,16 +172,16 @@ public class GroupDAO {
 
 			// commit if everything is ok
 			con.commit();
-			
-		} catch (SQLException e) {			
+
+		} catch (SQLException e) {
 			con.rollback();
 			throw e;
-			
+
 		} finally {
-			
+
 			// enable autocommit again
 			con.setAutoCommit(true);
-			
+
 			if(statement1 != null) {
 				try {
 					statement1.close();
@@ -204,25 +204,25 @@ public class GroupDAO {
 				}
 			}
 		}
-		
-		
-					
+
+
+
 	}
-	
+
 
 
 	public Group getGroupByID(Integer groupID) throws SQLException {
 		Group group = null;
-		
+
 		String query = "SELECT * FROM groupTable WHERE ID = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			
+
 			pstatement.setInt(1, groupID);
-			
+
 			try (ResultSet result = pstatement.executeQuery();) {
-				
+
 				if (result.next()) {
-					
+
 					group = new Group();
 					group.setCreator(result.getString("creator"));
 					group.setID(groupID);
@@ -235,7 +235,7 @@ public class GroupDAO {
 				}
 			}
 		}
-		
+
 		return group;
 	}
 

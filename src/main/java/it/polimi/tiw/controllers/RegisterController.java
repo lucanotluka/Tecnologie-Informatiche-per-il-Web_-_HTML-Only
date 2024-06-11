@@ -26,13 +26,14 @@ public class RegisterController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	 private TemplateEngine templateEngine;
-	
-	
+
+
     public RegisterController() {
         super();
     }
 
 
+	@Override
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
@@ -43,15 +44,16 @@ public class RegisterController extends HttpServlet {
 		templateResolver.setSuffix(".html");
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+
 		String username = null;
         String email = null;
     	String name = null;
     	String surname = null;
         String password = null;
         String confirmPassword = null;
-		
+
 		try {
 			username = StringEscapeUtils.escapeJava(request.getParameter("username"));
 			email = StringEscapeUtils.escapeJava(request.getParameter("email"));
@@ -59,8 +61,8 @@ public class RegisterController extends HttpServlet {
 			surname = StringEscapeUtils.escapeJava(request.getParameter("surname"));
 			password = StringEscapeUtils.escapeJava(request.getParameter("password"));
 			confirmPassword = StringEscapeUtils.escapeJava(request.getParameter("confirmPassword"));
-			
-			if (username == null || name == null || surname == null || email == null || password == null || confirmPassword == null 
+
+			if (username == null || name == null || surname == null || email == null || password == null || confirmPassword == null
 					|| username.isEmpty() || name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
 				throw new Exception("Missing or empty credential value");
 			} else if(!password.equals(confirmPassword)){
@@ -71,8 +73,8 @@ public class RegisterController extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or incorrect credential value");
 			return;
 		}
-		
-		
+
+
 		// query the DB for checking that username and email are Unique
         UserDAO userDao = new UserDAO(connection);
         boolean isUnique;
@@ -87,18 +89,18 @@ public class RegisterController extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Non-unique username or password");
 			return;
 		}
-        
+
         // insert into the DB the new User!
         User user = null;
         boolean success;
         try {
     		user = new User(username, name, surname, email, password);
    			success = userDao.registerSuccess(user);
-   			
+
     		if(success) {
-    			
+
     			// REGISTRATION SUCCESS message
-    			
+
     			ServletContext servletContext = getServletContext();
     			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
     			ctx.setVariable("successMsg", "Registration correctly done!");
@@ -106,18 +108,19 @@ public class RegisterController extends HttpServlet {
     			templateEngine.process(path, ctx, response.getWriter());
     		}
     		else { // if not successful, throws sql exception
-    			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to register User");    			
+    			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to register User");
        			return;
     		}
-    			
+
    		} catch (SQLException e) {
-   			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to register User");    			
+   			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to register User");
    			return;
     	}
 
 	}
-	
-	
+
+
+	@Override
 	public void destroy() {
 		try {
 			ConnectionHandler.closeConnection(connection);

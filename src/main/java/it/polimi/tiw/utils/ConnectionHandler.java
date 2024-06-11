@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServlet;
 
 @WebServlet("/ConnectionHandler")
 public class ConnectionHandler extends HttpServlet {
-	
-	
+
+
 	private static final long serialVersionUID = 1L;
 
 	public static Connection getConnection(ServletContext context) throws UnavailableException {

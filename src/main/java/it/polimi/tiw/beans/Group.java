@@ -14,7 +14,7 @@ public class Group {
 	private int maxParts;
 	private String creator;
 	private List<String> participants;
-	
+
 	public String getTitle() {
 		return title;
 	}
@@ -63,6 +63,6 @@ public class Group {
 	public void setID(int id) {
 		this.ID = id;
 	}
-	
-	
+
+
 }

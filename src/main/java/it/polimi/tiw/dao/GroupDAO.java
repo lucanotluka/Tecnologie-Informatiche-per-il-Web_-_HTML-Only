@@ -23,7 +23,7 @@ public class GroupDAO {
 	public List<Group> findMyGroups(String user) throws SQLException  {
 
 		List<Group> myGroups = new ArrayList<>();
-
+			
 		String query = "SELECT * from groupTable where creator = ?";
 		try (PreparedStatement pStatement = con.prepareStatement(query);) {
 
@@ -70,7 +70,7 @@ public class GroupDAO {
 	}
 
 	public List<Group> findOthersGroup(String user) throws SQLException {
-
+		
 		List<Group> othersGroups = new ArrayList<>();
 					// gotta retrieve groups where user isnt the creator
 					// and where invitations contains user

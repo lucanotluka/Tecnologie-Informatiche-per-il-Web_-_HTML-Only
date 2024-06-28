@@ -98,20 +98,20 @@ public class HomeController extends HttpServlet {
 
 
     	// Filtering for active groups only
-    	for(Group group : myGroups){
-    		// if group ended before today (represented by 0), remove it from the groups
-    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
-    				.compareTo(getMeYesterday()) <= 0 ) {
-    			myGroups.remove(group);
-    		}
-    	}
-    	for(Group group : othersGroups){
-    		// if group ended before today (represented by 0), remove it from the groups
-    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
-    				.compareTo(getMeYesterday()) <= 0 ) {
-    			othersGroups.remove(group);
-    		}
-    	}
+//    	for(Group group : myGroups){
+//    		// if group ended before today (represented by 0), remove it from the groups
+//    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
+//    				.compareTo(getMeYesterday()) <= 0 ) {
+//    			myGroups.remove(group);
+//    		}
+//    	}
+//    	for(Group group : othersGroups){
+//    		// if group ended before today (represented by 0), remove it from the groups
+//    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
+//    				.compareTo(getMeYesterday()) <= 0 ) {
+//    			othersGroups.remove(group);
+//    		}
+//    	}
 
 
 

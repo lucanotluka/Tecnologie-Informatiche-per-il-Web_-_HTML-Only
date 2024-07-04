@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -97,21 +98,24 @@ public class HomeController extends HttpServlet {
 		}
 
 
-    	// Filtering for active groups only
-//    	for(Group group : myGroups){
-//    		// if group ended before today (represented by 0), remove it from the groups
-//    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
-//    				.compareTo(getMeYesterday()) <= 0 ) {
-//    			myGroups.remove(group);
-//    		}
-//    	}
-//    	for(Group group : othersGroups){
-//    		// if group ended before today (represented by 0), remove it from the groups
-//    		if( getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
-//    				.compareTo(getMeYesterday()) <= 0 ) {
-//    			othersGroups.remove(group);
-//    		}
-//    	}
+//    	 Filtering for active groups only
+    	Iterator<Group> myGroupsIterator = myGroups.iterator();
+    	while (myGroupsIterator.hasNext()) {
+    	    Group group = myGroupsIterator.next();
+    	    if (getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
+    	            .compareTo(getMeYesterday()) <= 0) {
+    	        myGroupsIterator.remove();
+    	    }
+    	}
+    	
+    	Iterator<Group> othersGroupsIterator = othersGroups.iterator();
+    	while (othersGroupsIterator.hasNext()) {
+    	    Group group = othersGroupsIterator.next();
+    	    if (getGroupEndDate(group.getCreationDate(), group.getHowManyDays())
+    	            .compareTo(getMeYesterday()) <= 0) {
+    	        othersGroupsIterator.remove();
+    	    }
+    	}
 
 
 

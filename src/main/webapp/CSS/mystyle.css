@@ -5,6 +5,14 @@ header {
     padding: 20px;
 }
 
+body {
+    padding: 5%;
+    margin: 8%;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+
+
 
 .container {
 	display: flex;
